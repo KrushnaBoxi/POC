@@ -1,5 +1,6 @@
 package com.scb.controller;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,25 +10,25 @@ import com.scb.model.CustomerRequest;
 import com.scb.model.CustomerResponse;
 import com.scb.service.CustomerRequestService;
 import com.scb.utils.ReceiverConstants;
+import com.scb.utils.SCBCommonMethods;
 
-import lombok.extern.log4j.Log4j2;
 
 @RestController
 @RequestMapping(ReceiverConstants.CUSTOMER_URL)
-@Log4j2
 public class CustomerRequestController {
 	@Autowired
 	private CustomerRequestService customerRequestService;
+	@Autowired
+	private SCBCommonMethods commonMethods;
 
-	@RequestMapping(value = ReceiverConstants.CUSTOMER_REQUEST_HANDLE_URL, method = RequestMethod.POST)
+	@RequestMapping(value = ReceiverConstants.CUSTOMER_REQUEST_HANDLE_URL, method = RequestMethod.POST, produces = { "application/json", "application/xml" })
 	public CustomerResponse customerRequestHandle(@RequestBody CustomerRequest customerRequest) {
 		CustomerResponse customerResponse = new CustomerResponse();
-		if (customerRequest != null) {
+		if (commonMethods.isValidateCustomerRequest(customerRequest)) {
 			customerResponse = customerRequestService.customerRequestHandleService(customerRequest);
 		} else {
-			return CustomerResponse.builder().responseCode(400).responseMessage("null request message").build();
+			return commonMethods.getErrorResponse("Request Validation Error");
 		}
-
 		return customerResponse;
 	}
 

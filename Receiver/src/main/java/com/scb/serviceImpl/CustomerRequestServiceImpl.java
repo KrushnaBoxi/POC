@@ -1,5 +1,7 @@
 package com.scb.serviceImpl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -8,19 +10,26 @@ import com.scb.model.CustomerRequest;
 import com.scb.model.CustomerRequestData;
 import com.scb.model.CustomerResponse;
 import com.scb.service.CustomerRequestService;
-import com.scb.utils.SCBCommeonMethods;
+import com.scb.utils.SCBCommonMethods;
+
 @Service
-public class CustomerRequestServiceImpl implements CustomerRequestService{
+public class CustomerRequestServiceImpl implements CustomerRequestService {
 	@Autowired
 	private CustomerDataReposatory customerDataReposatory;
 	@Autowired
-	private SCBCommeonMethods commonMethods;
+	private SCBCommonMethods commonMethods;
 
 	@Override
 	public CustomerResponse customerRequestHandleService(CustomerRequest customerRequest) {
-		CustomerRequestData customerRequestData = commonMethods.getCustomerDataFromRequest(customerRequest);
-		return CustomerResponse.builder().customerRequestData(customerRequestData).responseCode(200).responseMessage("success").build();
+		List<CustomerRequestData> customerList = customerDataReposatory
+				.findByCustomerName(customerRequest.getCustomerName());
+		if (customerList.isEmpty()) {
+			return commonMethods.getSuccessResponse(
+					customerDataReposatory.save(commonMethods.getCustomerDataFromRequest(customerRequest)));
+		} else {
+			return commonMethods.getErrorResponse("Duplicate User");
+		}
+
 	}
-	
 
 }
