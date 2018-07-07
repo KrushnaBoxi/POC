@@ -12,7 +12,9 @@ import com.scb.model.CustomerResponse;
 import com.scb.service.CustomerRequestService;
 import com.scb.utils.SCBCommonMethods;
 
-@Service
+import lombok.extern.log4j.Log4j2;
+
+@Service @Log4j2
 public class CustomerRequestServiceImpl implements CustomerRequestService {
 	@Autowired
 	private CustomerDataReposatory customerDataReposatory;
@@ -22,11 +24,13 @@ public class CustomerRequestServiceImpl implements CustomerRequestService {
 	@Override
 	public CustomerResponse customerRequestHandleService(CustomerRequest customerRequest) {
 		List<CustomerRequestData> customerList = customerDataReposatory
-				.findByCustomerName(customerRequest.getCustomerName());
+				.findByCustomerNameAndCustomerId(customerRequest.getCustomerName(), customerRequest.getCustomerId() );
 		if (customerList.isEmpty()) {
+			log.info("Unique request");
 			return commonMethods.getSuccessResponse(
 					customerDataReposatory.save(commonMethods.getCustomerDataFromRequest(customerRequest)));
 		} else {
+			log.info("Duplicate request ");
 			return commonMethods.getErrorResponse("Duplicate User");
 		}
 

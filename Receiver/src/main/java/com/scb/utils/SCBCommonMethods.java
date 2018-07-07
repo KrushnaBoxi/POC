@@ -12,13 +12,12 @@ import com.scb.model.CustomerResponse;
 @Component
 public class SCBCommonMethods {
 
-	public LocalDateTime getCurrentDateTime() {
+	public String getCurrentDateTime() {
 		LocalDateTime localDateTime = LocalDateTime.now();
-		return localDateTime;
+		return localDateTime.toString();
 	}
 
 	public CustomerRequestData getCustomerDataFromRequest(CustomerRequest customerRequest) {
-
 		CustomerRequestData customerDataReposatory = CustomerRequestData.builder()
 				.customerAccType(customerRequest.getCustomerAccType()).customerId(customerRequest.getCustomerId())
 				.customerName(customerRequest.getCustomerName()).customerRegion(customerRequest.getCustomerRegion())
@@ -29,15 +28,14 @@ public class SCBCommonMethods {
 	public CustomerResponse getSuccessResponse(CustomerRequestData customerRequestData) {
 		return CustomerResponse.builder().customerRequestData(customerRequestData).responseCode(200)
 				.responseMessage("Success").build();
-
 	}
 
 	public CustomerResponse getErrorResponse() {
-		return CustomerResponse.builder().responseCode(400).responseMessage("Error Excution ").build();
+		return CustomerResponse.builder().responseCode(400).responseMessage("Bad request").build();
 
 	}
 
-	public CustomerResponse getErrorResponseDetails(int errorCode, String errorMessage) {
+	public CustomerResponse getErrorResponse(int errorCode, String errorMessage) {
 		return CustomerResponse.builder().responseCode(errorCode).responseMessage(errorMessage).build();
 
 	}
@@ -46,16 +44,18 @@ public class SCBCommonMethods {
 	public boolean isValidateCustomerRequest(CustomerRequest customerRequest) {
 		if(null == customerRequest){
 			return false;
-		} else if(customerRequest.getCustomerName().isEmpty() || "IND".equals(customerRequest.getCustomerName()) ){
+		} else if(customerRequest.getCustomerName().isEmpty() ){
 			return false;			
-		} else if(customerRequest.getCustomerId() == 0){
+		} else if(customerRequest.getCustomerId() == 0 ){
+			return false;
+		}else if("USA".equals(customerRequest.getCustomerRegion())){
 			return false;
 		}
 		return true;
 	}
 
 	public CustomerResponse getErrorResponse(String errorMessage) {
-		return CustomerResponse.builder().responseCode(500).responseMessage(errorMessage).build();
+		return CustomerResponse.builder().responseCode(400).responseMessage(errorMessage).build();
 	}
 
 

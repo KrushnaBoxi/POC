@@ -12,7 +12,7 @@ import lombok.ToString;
 public class CustomerRequest {
 	private long customerId;
 	private String customerName;
-	private int slNo;
+	private int serviceId;
 	private String customerAccType;
 	private String customerRegion;
 }

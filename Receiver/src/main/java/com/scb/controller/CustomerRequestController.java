@@ -12,8 +12,10 @@ import com.scb.service.CustomerRequestService;
 import com.scb.utils.ReceiverConstants;
 import com.scb.utils.SCBCommonMethods;
 
+import lombok.extern.log4j.Log4j2;
 
-@RestController
+
+@RestController @Log4j2
 @RequestMapping(ReceiverConstants.CUSTOMER_URL)
 public class CustomerRequestController {
 	@Autowired
@@ -23,12 +25,15 @@ public class CustomerRequestController {
 
 	@RequestMapping(value = ReceiverConstants.CUSTOMER_REQUEST_HANDLE_URL, method = RequestMethod.POST, produces = { "application/json", "application/xml" })
 	public CustomerResponse customerRequestHandle(@RequestBody CustomerRequest customerRequest) {
+		log.info("Request received "+ customerRequest.toString());
 		CustomerResponse customerResponse = new CustomerResponse();
 		if (commonMethods.isValidateCustomerRequest(customerRequest)) {
 			customerResponse = customerRequestService.customerRequestHandleService(customerRequest);
 		} else {
+			log.info(" Validation failed");
 			return commonMethods.getErrorResponse("Request Validation Error");
 		}
+		log.info("Response: "+customerResponse.toString());
 		return customerResponse;
 	}
 

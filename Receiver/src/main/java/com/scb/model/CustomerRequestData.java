@@ -26,13 +26,13 @@ public class CustomerRequestData {
 	private String customerName;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int slNo;
+	private int serviceId;
 	@Column
 	private String customerAccType;
 	@Column
 	private String customerRegion;
 	@Column 
-	private LocalDateTime timeStamp;
+	private String timeStamp;
 	
 	
 	
